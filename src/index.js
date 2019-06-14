@@ -12,6 +12,7 @@ const likes = document.querySelector("#likes");
 const likeBtn = document.querySelector("#like_button");
 const form = document.querySelector("#comment_form");
 const ul = document.querySelector("#comments");
+
 //////////////////////////////////
 function fetchPicture() {
   return fetch(imageURL).then(response => response.json());
@@ -26,7 +27,12 @@ function renderPage(json) {
   json.comments.forEach(function(comment) {
     const li = document.createElement("li");
     li.innerText = comment.content;
+    let deleteBtn = document.createElement("button");
+    deleteBtn.className = "deleteBtn";
+    deleteBtn.innerText = "Delete";
+    li.appendChild(deleteBtn);
     ul.appendChild(li);
+    deleteBtn.addEventListener("click", () => deleteComment(comment));
   });
 }
 //////////////////////////////////
@@ -85,9 +91,14 @@ function addCommentToServer(newComment) {
   });
 }
 //////////////////////////////////
-
+function deleteComment(comment) {
+  const parent = event.target.parentElement;
+  deleteCommentFromServer(comment.id).then(() => parent.remove());
+}
 //////////////////////////////////
-
-//////////////////////////////////
-
+function deleteCommentFromServer(id) {
+  return fetch(commentsURL + id, {
+    method: "DELETE"
+  });
+}
 //////////////////////////////////
